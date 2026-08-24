@@ -194,12 +194,11 @@ if "blueprint" in st.session_state:
     st.markdown("<br>", unsafe_allow_html=True)
 
     # Clean Tabs Layout (Added instruction tab as the first tab)
-    tab_guide, tab_map, tab_nodes, tab_master, tab_run, tab_chat, tab_translate, tab_refine = st.tabs([
+    tab_guide, tab_map, tab_nodes, tab_master, tab_chat, tab_translate, tab_refine = st.tabs([
         "📖 How to Use",
         "🗺️ Visual Pipeline", 
         "⚙️ Automation Nodes", 
         "📋 n8n Schema & Import",
-        "🚀 Live Execution Engine",
         "💬 RAG PDF Chatbot",
         "🌐 Universal Translator",
         "✍️ Workflow Refinement"
@@ -216,7 +215,6 @@ if "blueprint" in st.session_state:
            - **🗺️ Visual Pipeline:** View the diagrammatic node flow.
            - **⚙️ Automation Nodes:** Inspect step-by-step configurations, inputs, outputs, and recommended tools.
            - **📋 n8n Schema & Import:** Copy or download the native JSON schema file to import directly into your n8n canvas.
-           - **🚀 Live Execution Engine:** Run the custom Python algorithm extracted from the paper directly against your PDF text.
            - **💬 RAG PDF Chatbot:** Ask specific questions about the paper's findings, datasets, or methodology.
            - **🌐 Universal Translator:** Convert the pipeline into LangGraph, Zapier, or Make.com formats.
            - **✍️ Workflow Refinement:** Enter custom natural language instructions to modify or add nodes to your workflow.
@@ -257,79 +255,6 @@ if "blueprint" in st.session_state:
             file_name="n8n_workflow_import.json", 
             mime="application/json"
         )
-
-    with tab_run:
-        st.subheader("Interactive Logic Execution Engine")
-        st.write("Execute the actual custom Python algorithm generated from this research paper on your uploaded PDF:")
-
-        with st.expander("🔍 View Generated Python Algorithm Code"):
-            st.code(bp["executable_python_logic"], language="python")
-
-        if st.button("▶️ Run Actual Paper Logic on PDF", type="primary"):
-            with st.spinner("Executing custom algorithm against uploaded paper text..."):
-                try:
-                    import re
-                    import math
-                    import statistics
-                    import json
-                    import collections
-                    
-                    raw_text = "\n".join(load_and_chunk_pdf("temp.pdf"))
-
-                    local_scope = {
-                        "re": re,
-                        "math": math,
-                        "statistics": statistics,
-                        "json": json,
-                        "collections": collections
-                    }
-                    
-                    exec(bp["executable_python_logic"], globals(), local_scope)
-
-                    if "run_paper_logic" in local_scope:
-                        result = local_scope["run_paper_logic"](raw_text)
-                        st.success("✅ Paper logic executed successfully!")
-                        st.json(result)
-                        
-                        st.download_button(
-                            "📥 Download Execution Results (.json)",
-                            data=json.dumps(result, indent=2),
-                            file_name="execution_results.json",
-                            mime="application/json"
-                        )
-                    else:
-                        raise RuntimeError("The generated code did not expose the required function.")
-                except Exception:
-                    words = re.findall(r"[A-Za-z][A-Za-z'-]+", raw_text.lower())
-                    numbers = re.findall(r"[-+]?\d+(?:\.\d+)?", raw_text)
-                    stop_words = {
-                        "about", "after", "also", "been", "between", "could", "from",
-                        "have", "into", "more", "other", "paper", "that", "their",
-                        "these", "they", "this", "using", "were", "which", "with"
-                    }
-                    frequent_terms = collections.Counter(
-                        word for word in words
-                        if len(word) > 3 and word not in stop_words
-                    ).most_common(15)
-                    result = {
-                        "analysis_mode": "universal_fallback",
-                        "reason": "Paper-specific code needs an unavailable dependency or could not run.",
-                        "document_stats": {
-                            "characters": len(raw_text),
-                            "words": len(words),
-                            "numbers_found": len(numbers)
-                        },
-                        "frequent_terms": dict(frequent_terms),
-                        "sample_numbers": numbers[:20]
-                    }
-                    st.info("Paper-specific execution was unavailable, so universal document analysis was used instead.")
-                    st.json(result)
-                    st.download_button(
-                        "📥 Download Execution Results (.json)",
-                        data=json.dumps(result, indent=2),
-                        file_name="execution_results.json",
-                        mime="application/json"
-                    )
 
     with tab_chat:
         st.subheader("💬 Chat with Research Paper (In-Built RAG Assistant)")
