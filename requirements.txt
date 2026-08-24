@@ -4,3 +4,5 @@ chromadb
 pypdf
 pymupdf
 python-dotenv
+pytesseract
+Pillow
