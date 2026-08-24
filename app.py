@@ -128,7 +128,7 @@ with st.sidebar:
         st.info("Awaiting PDF Upload...")
 
     st.markdown("---")
-    st.markdown("<p style='font-size:12px; color:gray;'>Built for CMU AI & Innovations Portfolio</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:12px; color:gray;'>Built by Sonika K</p>", unsafe_allow_html=True)
 
 # ================= MAIN HERO SECTION =================
 st.title("⚡ ProtoPapers: Research-to-Workflow Architect")
@@ -193,8 +193,9 @@ if "blueprint" in st.session_state:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Clean Tabs Layout
-    tab_map, tab_nodes, tab_master, tab_run, tab_chat, tab_translate, tab_refine = st.tabs([
+    # Clean Tabs Layout (Added instruction tab as the first tab)
+    tab_guide, tab_map, tab_nodes, tab_master, tab_run, tab_chat, tab_translate, tab_refine = st.tabs([
+        "📖 How to Use",
         "🗺️ Visual Pipeline", 
         "⚙️ Automation Nodes", 
         "📋 n8n Schema & Import",
@@ -203,6 +204,23 @@ if "blueprint" in st.session_state:
         "🌐 Universal Translator",
         "✍️ Workflow Refinement"
     ])
+
+    with tab_guide:
+        st.subheader("📖 Welcome to ProtoPapers User Guide")
+        st.write("Follow these simple steps to transform any academic research paper into a working automated workflow:")
+
+        st.markdown("""
+        1. **Upload a Research PDF:** Use the sidebar control panel on the left to upload your PDF paper.
+        2. **Review Overview Cards:** Check the problem statement and workflow summary generated for your paper.
+        3. **Explore the Workspace Tabs:**
+           - **🗺️ Visual Pipeline:** View the diagrammatic node flow.
+           - **⚙️ Automation Nodes:** Inspect step-by-step configurations, inputs, outputs, and recommended tools.
+           - **📋 n8n Schema & Import:** Copy or download the native JSON schema file to import directly into your n8n canvas.
+           - **🚀 Live Execution Engine:** Run the custom Python algorithm extracted from the paper directly against your PDF text.
+           - **💬 RAG PDF Chatbot:** Ask specific questions about the paper's findings, datasets, or methodology.
+           - **🌐 Universal Translator:** Convert the pipeline into LangGraph, Zapier, or Make.com formats.
+           - **✍️ Workflow Refinement:** Enter custom natural language instructions to modify or add nodes to your workflow.
+        """)
 
     with tab_map:
         st.subheader("Data Flow Automation Diagram")
@@ -257,8 +275,7 @@ if "blueprint" in st.session_state:
                     import json
                     import collections
                     
-                    reader = PdfReader("temp.pdf")
-                    raw_text = "".join([page.extract_text() for page in reader.pages if page.extract_text()])
+                    raw_text = "\n".join(load_and_chunk_pdf("temp.pdf"))
 
                     local_scope = {
                         "re": re,
