@@ -219,7 +219,7 @@ if "blueprint" in st.session_state:
         3. **Explore the Workspace Tabs:**
            - **🗺️ Visual Pipeline:** View the diagrammatic node flow.
            - **⚙️ Automation Nodes:** Inspect step-by-step configurations, inputs, outputs, and recommended tools.
-           - **📋 n8n Schema & Import:** Copy or download the native JSON schema file to import directly into your n8n canvas.
+           - **📋 n8n Schema & Import/Python Algorithm Code:** Copy or download the native JSON schema file to import directly into your n8n canvas and an automated python algorithm code.
            - **💬 RAG PDF Chatbot:** Ask specific questions about the paper's findings, datasets, or methodology.
            - **🌐 Universal Translator:** Convert the pipeline into LangGraph, Zapier, or Make.com formats.
            - **✍️ Workflow Refinement:** Enter custom natural language instructions to modify or add nodes to your workflow.
