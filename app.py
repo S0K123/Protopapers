@@ -117,16 +117,16 @@ with st.sidebar:
     st.title("ProtoPapers")
     st.caption("Research-to-Workflow Engine")
     st.markdown("---")
-    
+
     uploaded_file = st.file_uploader("📂 Upload Research PDF", type="pdf")
-    
+
     st.markdown("---")
     st.markdown("### ⚙️ Engine Status")
     if "blueprint" in st.session_state:
         st.success("Pipeline Ready ✅")
     else:
         st.info("Awaiting PDF Upload...")
-    
+
     st.markdown("---")
     st.markdown("<p style='font-size:12px; color:gray;'>Built for CMU AI & Innovations Portfolio</p>", unsafe_allow_html=True)
 
