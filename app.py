@@ -9,10 +9,41 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-st.set_page_config(page_title="ProtoPapers Automation Architect", layout="wide")
+# Page Configuration for a clean, wide SaaS dashboard layout
+st.set_page_config(
+    page_title="ProtoPapers Automation Architect",
+    page_icon="⚡",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-st.title("⚡ ProtoPapers: Research-to-Workflow Automation Builder")
-st.caption("Convert research papers into drag-and-drop n8n-compatible automation pipelines, chat with your papers, and execute code live.")
+# Custom Styling Injection for a Sleek Modern Tech Aesthetic
+st.markdown("""
+    <style>
+        /* Main background & font smoothing */
+        .main {
+            background-color: #FAFAFC;
+        }
+        /* Style headers */
+        h1, h2, h3 {
+            letter-spacing: -0.025em;
+        }
+        /* Custom card styling wrappers */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 8px;
+        }
+        .stTabs [data-baseweb="tab"] {
+            background-color: #F1F5F9;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 500;
+        }
+        .stTabs [aria-selected="true"] {
+            background-color: #2563EB !important;
+            color: white !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 def render_mermaid(code: str):
     st.markdown("### 📊 Workflow Graph Structure")
@@ -80,12 +111,32 @@ def build_n8n_json(bp: dict) -> dict:
         }
     }
 
-uploaded_file = st.file_uploader("Upload Research Paper (PDF)", type="pdf")
+# ================= SIDEBAR WORKSPACE CONTROL =================
+with st.sidebar:
+    st.image("https://img.icons8.com/fluency/96/artificial-intelligence.png", width=64)
+    st.title("ProtoPapers")
+    st.caption("Research-to-Workflow Engine")
+    st.markdown("---")
+    
+    uploaded_file = st.file_uploader("📂 Upload Research PDF", type="pdf")
+    
+    st.markdown("---")
+    st.markdown("### ⚙️ Engine Status")
+    if "blueprint" in st.session_state:
+        st.success("Pipeline Ready ✅")
+    else:
+        st.info("Awaiting PDF Upload...")
+    
+    st.markdown("---")
+    st.markdown("<p style='font-size:12px; color:gray;'>Built for CMU AI & Innovations Portfolio</p>", unsafe_allow_html=True)
+
+# ================= MAIN HERO SECTION =================
+st.title("⚡ ProtoPapers: Research-to-Workflow Architect")
+st.markdown("Transform messy academic research papers into native n8n pipelines, executable algorithms, and interactive RAG insights.")
 
 if uploaded_file:
     file_key = f"uploaded_{uploaded_file.name}_{uploaded_file.size}"
     
-    # Check if this is a new file upload
     if st.session_state.get("current_file_key") != file_key:
         st.session_state["current_file_key"] = file_key
         for key in ["blueprint", "vector_store", "messages"]:
@@ -95,7 +146,6 @@ if uploaded_file:
         with open("temp.pdf", "wb") as f:
             f.write(uploaded_file.getbuffer())
 
-        # Automatically execute indexing and workflow generation in one go!
         with st.spinner("📂 Step 1/2: Indexing research paper into local vector store..."):
             chunks = load_and_chunk_pdf("temp.pdf")
             vector_store = VectorStoreManager()
@@ -113,15 +163,37 @@ if uploaded_file:
             except Exception as error:
                 st.error(f"Could not generate the workflow: {error}")
 
+else:
+    with st.container(border=True):
+        st.info("👆 Get started by uploading a research PDF paper using the sidebar control panel on the left.")
+
+# ================= DASHBOARD WORKSPACE =================
 if "blueprint" in st.session_state:
     bp = st.session_state["blueprint"]
-    st.success("🎉 Automation Workflow & n8n Schema Generated Automatically!")
-
-    st.header(f"📄 {bp['paper_title']}")
     
-    st.error(f"🎯 **Problem Statement:**\n\n{bp['problem_statement']}")
-    st.info(f"🔄 **Workflow Overview:**\n\n{bp['workflow_overview']}")
+    st.markdown("---")
+    st.header(f"📄 {bp['paper_title']}")
 
+    # Metrics Row
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Total Workflow Nodes", len(bp["nodes"]))
+    m2.metric("Execution Engine Status", "Active 🟢")
+    m3.metric("Schema Compatibility", "n8n v2 / Native")
+
+    # SaaS Card Containers for Overview
+    col_a, col_b = st.columns(2)
+    with col_a:
+        with st.container(border=True):
+            st.markdown("### 🎯 Problem Statement")
+            st.write(bp['problem_statement'])
+    with col_b:
+        with st.container(border=True):
+            st.markdown("### 🔄 Workflow Overview")
+            st.write(bp['workflow_overview'])
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Clean Tabs Layout
     tab_map, tab_nodes, tab_master, tab_run, tab_chat, tab_translate, tab_refine = st.tabs([
         "🗺️ Visual Pipeline", 
         "⚙️ Automation Nodes", 
@@ -145,7 +217,7 @@ if "blueprint" in st.session_state:
     with tab_nodes:
         st.subheader("Step-by-Step Node Configuration")
         for node in bp["nodes"]:
-            with st.expander(f"Node {node['node_number']}: {node['node_name']} [{node['node_type']}]", expanded=True):
+            with st.expander(f"Node {node['node_number']}: {node['node_name']} [{node['node_type']}]", expanded=False):
                 st.markdown(f"💡 **Purpose:** {node['plain_english_purpose']}")
                 c1, c2 = st.columns(2)
                 with c1:
@@ -175,7 +247,7 @@ if "blueprint" in st.session_state:
         with st.expander("🔍 View Generated Python Algorithm Code"):
             st.code(bp["executable_python_logic"], language="python")
 
-        if st.button("▶️ Run Actual Paper Logic on PDF"):
+        if st.button("▶️ Run Actual Paper Logic on PDF", type="primary"):
             with st.spinner("Executing custom algorithm against uploaded paper text..."):
                 try:
                     from pypdf import PdfReader
@@ -188,7 +260,6 @@ if "blueprint" in st.session_state:
                     reader = PdfReader("temp.pdf")
                     raw_text = "".join([page.extract_text() for page in reader.pages if page.extract_text()])
 
-                    # Pre-load ALL common standard libraries into execution scope
                     local_scope = {
                         "re": re,
                         "math": math,
@@ -217,7 +288,7 @@ if "blueprint" in st.session_state:
 
     with tab_chat:
         st.subheader("💬 Chat with Research Paper (In-Built RAG Assistant)")
-        st.write("Ask targeted questions about the paper's methodology, findings, datasets, or formulas with a continuous chat interface.")
+        st.write("Ask targeted questions about the paper's methodology, findings, datasets, or formulas.")
         
         if "messages" not in st.session_state:
             st.session_state.messages = []
@@ -240,7 +311,7 @@ if "blueprint" in st.session_state:
 
     with tab_translate:
         st.subheader("🌐 Universal Ecosystem Translator")
-        st.write("Translate the current workflow pipeline into alternative platforms (e.g., LangGraph, Zapier Webhook, Make.com).")
+        st.write("Translate the current workflow pipeline into alternative target platforms.")
         
         target_platform = st.selectbox("Select Target Ecosystem", ["LangGraph Orchestration", "Zapier Webhook Flow", "Make.com Scenario"])
         if st.button("Translate Workflow"):
