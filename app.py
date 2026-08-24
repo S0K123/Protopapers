@@ -147,7 +147,12 @@ if uploaded_file:
             f.write(uploaded_file.getbuffer())
 
         with st.spinner("📂 Step 1/2: Indexing research paper into local vector store..."):
-            chunks = load_and_chunk_pdf("temp.pdf")
+            try:
+                chunks = load_and_chunk_pdf("temp.pdf")
+            except RuntimeError as error:
+                st.error(f"Could not read this PDF: {error}")
+                st.stop()
+
             vector_store = VectorStoreManager()
             vector_store.add_chunks(chunks)
             st.session_state["vector_store"] = vector_store

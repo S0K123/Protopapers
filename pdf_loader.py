@@ -1,4 +1,5 @@
 import os
+import shutil
 from pypdf import PdfReader
 import fitz
 import pytesseract
@@ -20,6 +21,12 @@ def load_and_chunk_pdf(pdf_path: str, chunk_size: int = 800, overlap: int = 100)
 
     # Fallback to OCR if standard text extraction yields nothing
     if not full_text.strip():
+        if not shutil.which("tesseract") and not os.path.exists(pytesseract.pytesseract.tesseract_cmd):
+            raise RuntimeError(
+                "This PDF is scanned and needs OCR, but Tesseract is unavailable. "
+                "Deploy with packages.txt containing 'tesseract-ocr'."
+            )
+
         document = fitz.open(pdf_path)
         for page in document:
             pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
