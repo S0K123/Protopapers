@@ -261,6 +261,17 @@ if "blueprint" in st.session_state:
             mime="application/json"
         )
 
+        st.subheader("🐍 Generated Python Algorithm")
+        st.write("Review and download the Python algorithm generated from this research paper:")
+        with st.expander("🔍 View Generated Python Algorithm Code", expanded=True):
+            st.code(bp["executable_python_logic"], language="python")
+        st.download_button(
+            "📥 Download Python Algorithm (.py)",
+            data=bp["executable_python_logic"],
+            file_name="generated_paper_logic.py",
+            mime="text/x-python"
+        )
+
     with tab_chat:
         st.subheader("💬 Chat with Research Paper (In-Built RAG Assistant)")
         st.write("Ask targeted questions about the paper's methodology, findings, datasets, or formulas.")
