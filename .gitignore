@@ -1,0 +1,7 @@
+.env
+venv/
+venv_broken/
+__pycache__/
+*.py[cod]
+temp.pdf
+.streamlit/secrets.toml
