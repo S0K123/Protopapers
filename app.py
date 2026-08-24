@@ -321,3 +321,9 @@ if "blueprint" in st.session_state:
                     st.code(updated_json_str, language="json")
             else:
                 st.warning("Please enter a modification request.")
+
+st.markdown("---")
+st.markdown(
+    "💬 *Tested the app?* Please help us improve by filling out this "
+    "[Quick Feedback Form](https://docs.google.com/forms/d/e/1FAIpQLSc-BPKZF7-eRSa_rbU9igbBvDlpaDmwFgdvTdlaYw1eTcDjjw/viewform?usp=publish-editor)"
+)
